@@ -10,8 +10,9 @@ module.exports = class {
 		this.k = options.k || 1;
 		this.weights = options.weights || this.inp[0].map(() => 0);
 		this.projection = options.projection === undefined ? true : false;
-		this.outputs = options.outputs || [1, -1];
+		this.outputs = (options.outputs && options.outputs.length === 2 && [...new Set(options.outputs)].length === 2) ? options.outputs : [1, -1];
 
+		// changing outputs by mapping each value from the options.outputs array to the array [1, -1]
 		this.out = this.out.map(o => 1 - 2 * this.outputs.indexOf(o));
 	}
 
@@ -35,7 +36,7 @@ module.exports = class {
 			let score = this.__dot(w, tInp);
 			let d = 1 - eta * this.lambda;
 
-			if (tOut * score < 1) {
+			if (tOut * score < 1) { // if y(w · x) < 1
 				let dx = eta * tOut;
 				let xFactor = tInp.map(xi => xi * dx);
 
@@ -59,13 +60,14 @@ module.exports = class {
 		for (let t = 0; t <= iters; t++) {
 			let is = [];
 
+			// generates set of k distinct indices in the data
 			while (is.length < this.k) {
 				let i = Math.floor(Math.random() * this.out.length);
 				if (is.indexOf(i) < 0)
 					is.push(i);
 			}
 
-			let limitedIs = is.filter(i => this.__dot(w, this.inp[i]) * this.out[i] < 1);
+			let limitedIs = is.filter(i => this.__dot(w, this.inp[i]) * this.out[i] < 1); // finds all indices where y(w · x) < 1
 
 			if (limitedIs.length > 0) {
 				let eta = 1 / (this.lambda * (t + 1));
@@ -88,19 +90,22 @@ module.exports = class {
 	}
 
 	train(iters = 1) {
-		if (iters < 0 || !Number.isSafeInteger(iters)) return;
+		if (iters < 0 || !Number.isSafeInteger(iters)) return; // iters > 0 and iters is an integer
 
-		if (this.k === 1)
+		if (this.k === 1) // use special case of k = 1 for higher performance if possible
 			this.__train(iters);
 		else
 			this.__miniBatchTrain(iters);
 
+		// calculates bias in my own sort of naive way, but seemed to have good accuracy:
+		// b = -(max {x · w | x ∈ inputs ^ f(w, x) = -1})
 		this.bias = Math.max.apply(null, this.inp.filter((_, i) => this.out[i] === -1).map(i => this.__dot(i, this.weights)));
 
 		return this;
 	}
 
 	predict(x) {
-		return ((this.__dot(x, this.weights) - this.bias) <= 0 ? this.outputs[1] : this.outputs[0]);
+		// y = x · w + b <= 0 ? -1 : 1
+		return ((this.__dot(this.weights, x) - this.bias) <= 0 ? this.outputs[1] : this.outputs[0]);
 	}
 };
