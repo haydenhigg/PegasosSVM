@@ -1,9 +1,15 @@
 module.exports = class {
+	__scale(vec, n = 1) { // scale vector to have L2 norm = n
+    		let norm = Math.sqrt(vec.reduce((s, i) => s + (i ** 2), 0));
+
+    		return vec.map(i => i * (n / norm));
+        }
+	
 	constructor(inp, out, options = {}) {
 		if ([...new Set(out)].length > 2)
 			throw RangeError('too many output options');
 
-		this.inp = inp;
+		this.inp = inp.map(this.__scale); // scale to have L2 norm = 1, doesn't change relative positions in solution space
 		this.out = out;
 
 		this.lambda = options.lambda || 1;
