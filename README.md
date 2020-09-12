@@ -31,3 +31,7 @@ console.log(model.predict(testValue)); //=> predicted output
 - This implementation calculates a bias to be used when predicting. If you wish to override or view this, it is available as the value `model.bias` and is set at the end of the `train` method.
 - If k == 1 then the special case algorithm is used, otherwise the general algorithm for a mini-batch of size k is used.
 - The `train` method returns its instance, so method calls can be chained.
+
+## NPM
+
+This package is [available from NPM](https://www.npmjs.com/package/pegasossvm) as 'pegasossvm'.
