@@ -103,16 +103,15 @@ module.exports = class {
 		else
 			this.__miniBatchTrain(iters);
 
-		// calculates bias in my own sort of naive way, but seemed to have good accuracy for some data:
+		// can try to calculate bias like:
 		// b = -(max {x · w | x ∈ inputs && f(w, x) = -1})
-		// this.bias = Math.max.apply(null, this.inp.filter((_, i) => this.out[i] === -1).map(i => this.__dot(i, this.weights)));
-		this.bias = 0;
+		// this.bias = -Math.max.apply(null, this.inp.filter((_, i) => this.out[i] === -1).map(i => this.__dot(i, this.weights)));
 
 		return this;
 	}
 
 	predict(x) {
 		// y = x · w + b <= 0 ? -1 : 1
-		return ((this.__dot(this.weights, x) - this.bias) <= 0 ? this.outputs[1] : this.outputs[0]);
+		return (this.__dot(this.weights, x) <= 0 ? this.outputs[1] : this.outputs[0]);
 	}
 };
