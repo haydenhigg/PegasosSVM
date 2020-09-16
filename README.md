@@ -8,14 +8,13 @@ A simple, lightweight package for linear classification based off the support ve
 const PegasosSVM = require('pegasossvm');
 
 const inputValues = [[...], [...], ...]; // input array with each item being its own n-dimensional feature array
-const outputValues = [...];
+const outputValues = [...]; // these do NOT need to be mapped to -1 and 1, that will be done internally
 
 const options = { // the completely optional additional parameters, shown here at their defaults
   lambda: 1, // regularization parameter
   k: 1, // change if you want to use mini-batch learning in each iteration
   weights: [0, ..., 0], // initial weights, start at 0 by default
   projection: true, // use a projection step; this was shown to have little effect but is offered anyway
-  outputs: [1, -1] // if you want to use output values besides -1 and 1 in training and predicting, set this to [yourValue1, yourValue2]
 }
 
 const model = new PegasosSVM(inputValues, outputValues, options);
