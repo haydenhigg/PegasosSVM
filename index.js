@@ -1,9 +1,9 @@
 module.exports = class {
 	__scale(vec, n = 1) { // scale vector to have L2 norm = n
-    		let norm = Math.sqrt(vec.reduce((s, i) => s + (i ** 2), 0));
+		let norm = Math.sqrt(vec.reduce((s, i) => s + (i ** 2), 0));
 
-    		return vec.map(i => i * (n / norm));
-        }
+		return vec.map(i => i * (n / norm));
+	}
 	
 	constructor(inp, out, options = {}) {
 		this.inp = inp.map(this.__scale); // scale to have L2 norm = 1, doesn't change relative positions in solution space
@@ -103,9 +103,10 @@ module.exports = class {
 		else
 			this.__miniBatchTrain(iters);
 
-		// calculates bias in my own sort of naive way, but seemed to have good accuracy:
-		// b = -(max {x · w | x ∈ inputs ^ f(w, x) = -1})
-		this.bias = Math.max.apply(null, this.inp.filter((_, i) => this.out[i] === -1).map(i => this.__dot(i, this.weights)));
+		// calculates bias in my own sort of naive way, but seemed to have good accuracy for some data:
+		// b = -(max {x · w | x ∈ inputs && f(w, x) = -1})
+		// this.bias = Math.max.apply(null, this.inp.filter((_, i) => this.out[i] === -1).map(i => this.__dot(i, this.weights)));
+		this.bias = 0;
 
 		return this;
 	}
