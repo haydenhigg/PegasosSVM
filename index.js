@@ -6,9 +6,6 @@ module.exports = class {
         }
 	
 	constructor(inp, out, options = {}) {
-		if ([...new Set(out)].length > 2)
-			throw RangeError('too many output options');
-
 		this.inp = inp.map(this.__scale); // scale to have L2 norm = 1, doesn't change relative positions in solution space
 		this.out = out;
 
@@ -16,7 +13,10 @@ module.exports = class {
 		this.k = options.k || 1;
 		this.weights = options.weights || this.inp[0].map(() => 0);
 		this.projection = options.projection === undefined ? true : false;
-		this.outputs = (options.outputs && options.outputs.length === 2 && [...new Set(options.outputs)].length === 2) ? options.outputs : [1, -1];
+		this.outputs = [...new Set(out)];
+		
+		if (this.outputs.length > 2)
+			throw RangeError('too many output options');
 
 		// changing outputs by mapping each value from the options.outputs array to the array [1, -1]
 		this.out = this.out.map(o => 1 - 2 * this.outputs.indexOf(o));
