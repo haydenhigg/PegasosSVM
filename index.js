@@ -16,7 +16,7 @@ module.exports = class {
 		this.outputs = [...new Set(out)];
 		
 		if (this.outputs.length > 2)
-			throw RangeError('too many output options');
+			throw RangeError('too many unique output possibilities');
 
 		// changing outputs by mapping each value from the options.outputs array to the array [1, -1]
 		this.out = this.out.map(o => 1 - 2 * this.outputs.indexOf(o));
