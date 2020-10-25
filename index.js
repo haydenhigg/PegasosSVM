@@ -5,6 +5,15 @@ module.exports = class {
 		return vec.map(i => i * (n / norm));
 	}
 	
+	__findOutputs() {
+		this.outputs = [...new Set(out)];
+
+		if (this.outputs.length > 2)
+	 		throw new RangeError('too many unique output possibilities');
+
+		this.out = this.out.map(o => 1 - 2 * this.outputs.indexOf(o)); // map outputs to -1 or 1
+        }
+	
 	constructor(inp, out, options = {}) {
 		this.inp = inp.map(this.__scale); // scale to have L2 norm = 1, doesn't change relative positions in solution space
 		this.out = out;
@@ -13,13 +22,6 @@ module.exports = class {
 		this.k = options.k || 1;
 		this.weights = options.weights || this.inp[0].map(() => 0);
 		this.projection = options.projection === undefined ? true : false;
-		this.outputs = [...new Set(out)];
-		
-		if (this.outputs.length > 2)
-			throw RangeError('too many unique output possibilities');
-
-		// changing outputs by mapping each value from the options.outputs array to the array [1, -1]
-		this.out = this.out.map(o => 1 - 2 * this.outputs.indexOf(o));
 	}
 
 	__dot(...args) { // vector multiplication
@@ -31,6 +33,8 @@ module.exports = class {
 	}
 
 	__train(iters) {
+		this.__findOutputs();
+		
 		var w = [...this.weights];
 
 		for (let t = 0; t <= iters; t++) {
@@ -61,6 +65,8 @@ module.exports = class {
 	}
 
 	__miniBatchTrain(iters) {
+		this.__findOutputs();
+		
 		let w = [...this.weights];
 
 		for (let t = 0; t <= iters; t++) {
@@ -111,7 +117,11 @@ module.exports = class {
 	}
 
 	predict(x) {
-		// y = x · w + b <= 0 ? -1 : 1
-		return (this.__dot(this.weights, x) <= 0 ? this.outputs[1] : this.outputs[0]);
+		if (this.outputs.length === 0)
+			return null;
+		else if (this.outputs.lenght === 1)
+			return this.outputs[0];
+		else
+			return this.__dot(this.weights, x) > 0 ? this.outputs[0] : this.outputs[1];
 	}
 };
