@@ -31,7 +31,7 @@ module.exports = class {
 	}
 
 	__train(iters) {
-		var w = this.weights;
+		var w = [...this.weights];
 
 		for (let t = 0; t <= iters; t++) {
 			let i = Math.floor(Math.random() * this.out.length);
@@ -61,7 +61,7 @@ module.exports = class {
 	}
 
 	__miniBatchTrain(iters) {
-		var w = this.weights;
+		let w = [...this.weights];
 
 		for (let t = 0; t <= iters; t++) {
 			let is = [];
