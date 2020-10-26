@@ -6,7 +6,7 @@ module.exports = class {
 	}
 	
 	__findOutputs() {
-		this.outputs = [...new Set(out)];
+		this.outputs = [...new Set(this.out)];
 
 		if (this.outputs.length > 2)
 	 		throw new RangeError('too many unique output possibilities');
