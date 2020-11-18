@@ -119,7 +119,7 @@ module.exports = class {
 	predict(x) {
 		if (this.outputs.length === 0)
 			return null;
-		else if (this.outputs.lenght === 1)
+		else if (this.outputs.length === 1)
 			return this.outputs[0];
 		else
 			return this.__dot(this.weights, x) > 0 ? this.outputs[0] : this.outputs[1];
