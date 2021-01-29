@@ -15,7 +15,7 @@ module.exports = class {
         }
 	
 	constructor(inp, out, options = {}) {
-		this.inp = inp.map(this.__scale); // scale to have L2 norm = 1, doesn't change relative positions in solution space
+		this.inp = inp.map(x => this.__scale(x)); // scale to have L2 norm = 1, doesn't change relative positions in solution space
 		this.out = out;
 
 		this.lambda = options.lambda || 1;
@@ -122,6 +122,6 @@ module.exports = class {
 		else if (this.outputs.length === 1)
 			return this.outputs[0];
 		else
-			return this.__dot(this.weights, x) > 0 ? this.outputs[0] : this.outputs[1];
+			return this.__dot(this.weights, this.__scale(x)) > 0 ? this.outputs[0] : this.outputs[1];
 	}
 };
